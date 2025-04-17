@@ -1,0 +1,23 @@
+{
+  "name": "pruebas-ia",
+  "version": "1.0.0",
+  "description": "pruebas para ia",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CristhianButron/Pruebas-IA.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CristhianButron/Pruebas-IA/issues"
+  },
+  "homepage": "https://github.com/CristhianButron/Pruebas-IA#readme",
+  "dependencies": {
+    "@huggingface/inference": "^3.8.1",
+    "express": "^5.1.0"
+  }
+}
