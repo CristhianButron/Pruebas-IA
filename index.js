@@ -1,45 +1,42 @@
 import express from "express";
-import { InferenceClient } from "@huggingface/inference";
+import dotenv from "dotenv";
+import Together from "together-ai";
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
 
-// Middleware para parsear JSON
 app.use(express.json());
 
-// Configuración del cliente de Hugging Face
-const client = new InferenceClient("tokens");
+// Inicializa Together con tu API Key
+const together = new Together({
+  apiKey: process.env.TOGETHER_API_KEY,
+});
 
 // Endpoint POST para interactuar con el modelo
 app.post("/chat", async (req, res) => {
-    const { message } = req.body;
+  const { message } = req.body;
 
-    if (!message) {
-        return res.status(400).json({ error: "El campo 'message' es obligatorio." });
-    }
+  if (!message) {
+    return res.status(400).json({ error: "El campo 'message' es obligatorio." });
+  }
 
-    try {
-        const chatCompletion = await client.chatCompletion({
-            provider: "together",
-            model: "mistralai/Mistral-7B-Instruct-v0.3",
-            messages: [
-                {
-                    role: "user",
-                    content: message,
-                },
-            ],
-            max_tokens: 512,
-        });
+  try {
+    const response = await together.chat.completions.create({
+      messages: [{ role: "user", content: message }],
+      model: "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
+      max_tokens: 1024, // Puedes ajustarlo según tus necesidades
+    });
 
-        const response = chatCompletion.choices[0].message;
-        res.json({ response });
-    } catch (error) {
-        console.error("Error:", error.message);
-        res.status(500).json({ error: "Ocurrió un error al procesar la solicitud." });
-    }
+    const reply = response.choices[0].message.content;
+    res.json({ response: reply });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Ocurrió un error al procesar la solicitud." });
+  }
 });
 
-// Inicia el servidor
 app.listen(port, () => {
-    console.log(`Servidor corriendo en http://localhost:${port}`);
+  console.log(`Servidor corriendo en http://localhost:${port}`);
 });
